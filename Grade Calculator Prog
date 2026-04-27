@@ -1,0 +1,139 @@
+import csv  # used to save and read data from a file
+
+# name of the file where data will be stored
+FILE_NAME = "grades.csv"
+
+# list to store all students
+# each student will look like: ["John", 85.0]
+students = []
+
+
+def load_data():
+
+    #This function reads existing student data from the CSV file  and stores it in the 'students' list.
+
+    try:
+        with open(FILE_NAME, "r") as file:  # open file in read mode
+            reader = csv.reader(file)  # create reader object
+
+            # loop through each row in the file
+            for row in reader:
+                # row[0] = name, row[1] = grade
+                students.append([row[0], float(row[1])])
+
+    except FileNotFoundError:
+        # if file does not exist yet, do nothing
+        # (program will create it later)
+        pass
+
+
+
+def save_data():
+
+    #This function saves all student data into the CSV file.
+
+    with open(FILE_NAME, "w", newline="") as file:  # open file in write mode
+        writer = csv.writer(file)  # create writer object
+
+        # write all student data into the file
+        writer.writerows(students)
+
+
+def add_student():
+
+    #This function asks the user for a student name and grade, then stores it in the list.
+
+    name = input("Enter student name: ")
+
+    try:
+        grade = float(input("Enter grade: "))  # convert input to number
+    except ValueError:
+        print("Invalid grade. Please enter a number.\n")
+        return
+
+    # add student to the list
+    students.append([name, grade])
+
+    # save updated list to file
+    save_data()
+
+    print("Student added!\n")
+
+
+def view_students():
+
+    #This function displays all students and their grades.
+
+    print("\nStudent List:")
+
+    # loop through the list and print each student
+    for s in students:
+        print(f"{s[0]}: {s[1]}")
+
+    print()
+
+
+
+def show_average():
+
+    #This function calculates and prints the average grade.
+
+    if not students:  # check if list is empty
+        print("No data\n")
+        return
+
+    # calculate average using sum and length
+    avg = sum(s[1] for s in students) / len(students)
+
+    print(f"Average grade: {avg}\n")
+
+
+def show_stats():
+
+    #This function finds the highest and lowest grades.
+
+    if not students:
+        print("No data\n")
+        return
+
+    # find highest grade using max()
+    highest = max(students, key=lambda x: x[1])
+
+    # find lowest grade using min()
+    lowest = min(students, key=lambda x: x[1])
+
+    print(f"Highest: {highest[0]} ({highest[1]})")
+    print(f"Lowest: {lowest[0]} ({lowest[1]})\n")
+
+
+def menu():
+
+    #This function shows the menu and controls the program flow.
+
+    load_data()  # load saved data when program starts
+
+    while True:  # loop runs until user chooses to exit
+        print("1. Add Student")
+        print("2. View Students")
+        print("3. Show Average")
+        print("4. Show Highest & Lowest")
+        print("5. Exit")
+
+        choice = input("Choose: ")
+
+        # check user choice and call correct function
+        if choice == "1":
+            add_student()
+        elif choice == "2":
+            view_students()
+        elif choice == "3":
+            show_average()
+        elif choice == "4":
+            show_stats()
+        elif choice == "5":
+            print("Goodbye!")
+            break  # exit loop
+        else:
+            print("Invalid choice\n")
+
+menu()
